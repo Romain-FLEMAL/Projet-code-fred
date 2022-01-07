@@ -1,0 +1,53 @@
+try {
+    $base = new PDO('mysql:host=localhost; dbname=registration', 'root', '');
+    $DonneeBruteUser = $base->query("SELECT * FROM users");
+    $TabPersoIndex = 0;
+    while ($tab = $DonneeBruteUser->fetch()) {
+        //ici on creer nos objets User pour chaque tuple de notre requête
+        //et on les places dans un tableau de Personnage
+        $TabPerso[$TabPersoIndex++] = new user($tab['id'], $tab['username']);
+    }
+} catch (exception $e) {
+    $e->getMessage();
+}
+?>
+<?php
+if (isset($_POST["username"])) {
+	//recherche de l'id dans le tableau de personnage
+	foreach ($_POST['username'] as $iduser) {
+		$DonneeBruteUser = $base->query("UPDATE `users` SET `id`=NULL,`username`='$username',`type`='$type',`password`='".hash('sha256', $password)."' WHERE 1");
+		$i = 0;
+		foreach ($TabPerso as $objetPerso) {
+			if ($objetPerso->getIdUser() == $iduser) {
+				$objetPerso->supprimerUser();
+			}
+		}
+	}
+}
+
+        //
+
+		if($DonneeBruteUser){
+		echo "<div class='sucess'>
+				<h3>L'utilisateur a été modifié avec succés.</h3>
+				<p>Cliquez <a href='home.php'>ici</a> pour retourner à la page d'accueil</p>
+				</div>";
+	
+                }        
+            
+	else{
+	?>
+
+
+
+     <?php
+            //parcours du tableau de User pour afficher les options de la liste déroulante
+            foreach ($TabPerso as $objetPerso) {
+                if ($objetPerso->getUsername() == $_POST["username"]) {
+                    echo '<option selected = "' . $objetPerso->getUsername() . '">' . $objetPerso->getUsername() . '</option>';
+                } else {
+                    echo '<option value = "'. $objetPerso->getUsername() . '">' . $objetPerso->getUsername() . '</option>';
+                }
+            }
+
+            ?>
